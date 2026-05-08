@@ -4,5 +4,8 @@
     <applicationService serviceInterface="com.intellij.platform.ide.customization.ExternalProductResourceUrls"
                         serviceImplementation="com.intellij.idea.customization.base.RebasedExternalResourceUrls"
                         overrides="true"/>
+    <defaultToolWindowLayout
+      implementation="com.intellij.idea.customization.base.RebasedToolWindowLayoutProvider"
+      order="last"/>
   </extensions>
 </idea-plugin>
