@@ -147,6 +147,9 @@ Function ConfirmDesktopShortcut
   !insertmacro INSTALLOPTIONS_WRITE "Desktop.ini" "Field $updateContextMenu" "Text" "$(update_context_menu_label)"
   !insertmacro INSTALLOPTIONS_WRITE "Desktop.ini" "Field ${INSTALL_OPTION_ELEMENTS}" "Text" "$(create_associations_group)"
 
+  ; enable by default
+  !insertmacro INSTALLOPTIONS_WRITE "Desktop.ini" "Field $updateContextMenu" "State" "1"
+
   Call customPreInstallActions
 
   ${If} "${ASSOCIATION}" == "NoAssociation"
@@ -325,27 +328,6 @@ Function silentConfigReader
     ${Loop}
     !insertmacro INSTALLOPTIONS_WRITE "Desktop.ini" "Settings" "NumFields" "$R0"
   ${EndIf}
-FunctionEnd
-
-
-Function searchCurrentVersion
-  ${LogText} ""
-  ${LogText} "Checking if '${MUI_PRODUCT} ${VER_BUILD}' is already installed"
-
-  ReadRegStr $R0 HKCU "Software\${MANUFACTURER}\${MUI_PRODUCT}\${VER_BUILD}" ""
-  ${If} $R0 == ""
-  ${OrIfNot} ${FileExists} "$R0\bin\${PRODUCT_EXE_FILE}"
-    ReadRegStr $R0 HKLM "Software\${MANUFACTURER}\${MUI_PRODUCT}\${VER_BUILD}" ""
-    ${If} $R0 == ""
-    ${OrIfNot} ${FileExists} "$R0\bin\${PRODUCT_EXE_FILE}"
-      Return
-    ${EndIf}
-  ${EndIf}
-
-  MessageBox MB_YESNO|MB_ICONQUESTION "$(current_version_already_installed)" IDYES continue IDNO exit_installer
-exit_installer:
-  Abort
-continue:
 FunctionEnd
 
 
@@ -788,10 +770,6 @@ Function .onInit
     ${Else}
       ${LogText} "  ... ignored on TeamCity"
     ${EndIf}
-  ${EndIf}
-
-  ${IfNot} ${Silent}
-    Call searchCurrentVersion
   ${EndIf}
 
   !insertmacro INSTALLOPTIONS_EXTRACT "Desktop.ini"
